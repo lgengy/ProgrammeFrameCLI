@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ProgrammeFrameCLI.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ProjectLocate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\working</Value>
+    </Setting>
+    <Setting Name="ProgrammeFrameLocate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\working\z程序开发框架\ProgrammeFrame</Value>
+    </Setting>
+    <Setting Name="GitInstallDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%PROGRAMFILES%\Git</Value>
+    </Setting>
+    <Setting Name="VSInstallDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise</Value>
+    </Setting>
+    <Setting Name="UUID" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
