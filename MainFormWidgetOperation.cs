@@ -115,8 +115,10 @@ namespace ProgrammeFrameCLI
 
                 if (cb_GitSelect.Checked)
                 {
-                    Utils.Utils.CMDExecute("start \"\" /MIN \"" + Properties.Settings.Default.GitInstallDir + "\\bin\\sh.exe\" -c \"cd " + projectDir.Replace('\\', '/') + "; git init\"");
                     GlobalData.logger.Info("初始化git");
+                    Utils.Utils.CMDExecute("start \"\" /MIN \"" + Properties.Settings.Default.GitInstallDir + "\\bin\\sh.exe\" -c \"cd " + projectDir.Replace('\\', '/') + "; git init\"");
+                    if(File.Exists(Application.StartupPath + "\\.gitignore")) File.Copy(Application.StartupPath + "\\.gitignore", projectDir + "\\.gitignore", true);
+                    else GlobalData.logger.Info(".gitignore文件不存在");
                 }
 
                 Task.Factory.StartNew(() =>
