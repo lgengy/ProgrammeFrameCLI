@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ProgrammeFrameCLI
@@ -105,43 +106,51 @@ namespace ProgrammeFrameCLI
                 else
                 {
                     EntityAvailableUtil availableUtil = new EntityAvailableUtil();
-                    if (!item.Name.Equals("Utils.cs"))
+
+                    utilsCount++;
+                    StreamReader sr = new StreamReader(item.FullName);
+                    while (!sr.EndOfStream)
                     {
-                        utilsCount++;
-                        StreamReader sr = new StreamReader(item.FullName);
-                        while (!sr.EndOfStream)
+                        string[] content = sr.ReadLine().Split('：');
+                        if (content.Length > 1)
                         {
-                            string[] content = sr.ReadLine().Split('：');
-                            if (content.Length > 1)
+                            availableUtil.ClassFullPath = item.FullName;
+                            if (content[0].Contains("类  名")) availableUtil.Name = content[1];
+                            if (content[0].Contains("详  情")) availableUtil.Detail = content[1];
+                            if (content[0].Contains("描  述"))
                             {
-                                availableUtil.ClassFullPath = item.FullName;
-                                if (content[0].Contains("类  名")) availableUtil.Name = content[1];
-                                if (content[0].Contains("详  情")) availableUtil.Detail = content[1];
-                                if (content[0].Contains("描  述"))
+                                availableUtil.Description = content[1];
+                                CheckBox cb = new CheckBox
                                 {
-                                    availableUtil.Description = content[1];
-                                    CheckBox cb = new CheckBox
-                                    {
-                                        AutoSize = false,
-                                        Size = new Size(110, 140),
-                                        BackColor = Color.SkyBlue,
-                                        BackgroundImage = Properties.Resources.availableUtils,
-                                        BackgroundImageLayout = ImageLayout.Stretch,
-                                        CheckAlign = ContentAlignment.BottomLeft,
-                                        Margin = new Padding(8, 12, 8, 8),
-                                        FlatStyle = FlatStyle.Popup,
-                                        Text = content[1],
-                                        TextAlign = ContentAlignment.BottomCenter,
-                                        Tag = availableUtil
-                                    };
-                                    cb.CheckedChanged += Cb_CheckedChanged;
-                                    flp_AvailableUtils.Controls.Add(cb);
+                                    AutoSize = false,
+                                    Size = new Size(110, 140),
+                                    BackColor = Color.SkyBlue,
+                                    BackgroundImage = Properties.Resources.availableUtils,
+                                    BackgroundImageLayout = ImageLayout.Stretch,
+                                    CheckAlign = ContentAlignment.BottomLeft,
+                                    Margin = new Padding(8, 12, 8, 8),
+                                    FlatStyle = FlatStyle.Popup,
+                                    Text = content[1],
+                                    TextAlign = ContentAlignment.BottomCenter,
+                                    Tag = availableUtil
+                                };
+                                if (item.Name.Equals("Utils.cs"))//此项必选
+                                {
+                                    cb.Checked = true;
+                                    cb.Enabled = false;
+                                    cb.BackColor = Color.SteelBlue;
+                                    listSelectedUtils.Add(availableUtil);
                                 }
+                                else
+                                {
+                                    cb.CheckedChanged += Cb_CheckedChanged;
+                                }
+                                flp_AvailableUtils.Controls.Add(cb);
                             }
-                            else if (content[0].EndsWith("***/")) break;
                         }
-                        sr.Close();
+                        else if (content[0].EndsWith("***/")) break;
                     }
+                    sr.Close();
                 }
             }
         }
@@ -161,7 +170,7 @@ namespace ProgrammeFrameCLI
             {
                 cb.BackColor = Color.SkyBlue;
                 if (listSelectedUtils.Contains(availableUtil)) listSelectedUtils.Remove(availableUtil);
-                //if (listSelectedUtils.Count != utilsCount && cb_UtilsAll.Checked) cb_UtilsAll.Checked = false;//TODO 还没想好怎么处理全选状态下取消某项选择后怎么处理全选复选框选中状态
+                if (cb_UtilsAll.Checked) cb_UtilsAll.Checked = false;
             }
         }
 
@@ -180,6 +189,67 @@ namespace ProgrammeFrameCLI
             if(pnl1) Text = "程序框架脚手架-基本信息";
             else if(pnl2) Text = "程序框架脚手架-工具选择";
             else if (pnl3) Text = "程序框架脚手架-设置";
+        }
+
+        /// <summary>
+        /// 根据所给designer文件生成界面
+        /// </summary>
+        /// <param name="oldDesignerPath">界面模板路径</param>
+        /// <param name="newDesignerPath">新项目界面路径</param>
+        /// <param name="oldNameSpace">模板包名</param>
+        /// <param name="newNameSpace">新项目界面包名</param>
+        /// <param name="oldClassName">模板类名</param>
+        private void GenerateUIFromExistUI(string oldDesignerPath, string newDesignerPath, string oldNameSpace, string newNameSpace, string oldClassName)
+        {
+            try
+            {
+                if(!string.IsNullOrEmpty(oldDesignerPath))
+                {
+                    StreamReader sr = new StreamReader(oldDesignerPath);
+                    StreamWriter sw = new StreamWriter(newDesignerPath, false, sr.CurrentEncoding);
+                    while (!sr.EndOfStream)
+                    {
+                        string content = sr.ReadLine();
+
+                        if (content.Contains(oldNameSpace)) sw.WriteLine(content.Replace(oldNameSpace, newNameSpace));
+                        else if (content.Contains(oldClassName)) sw.WriteLine(content.Replace(oldClassName, "MainForm"));
+                        else
+                            sw.WriteLine(content);
+                    }
+                    sw.Flush();
+                    sw.Close();
+                    sr.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                GlobalData.logger.Warn(ex.Message);
+                GlobalData.logger.Error(ex);
+            }
+        }
+
+        /// <summary>
+        /// 把模板界面所用资源文件拷贝到新项目
+        /// </summary>
+        /// <param name="oldResourcesDir">界面模板所用资源目录</param>
+        /// <param name="projectDir">项目目录</param>
+        private void CopyResourcesFile(string oldResourcesDir, string projectDir)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(oldResourcesDir))
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        Utils.Utils.DirectoryCopy(oldResourcesDir, projectDir + "\\Resources");
+                    }, TaskCreationOptions.AttachedToParent);
+                }
+            }
+            catch (Exception ex)
+            {
+                GlobalData.logger.Warn(ex.Message);
+                GlobalData.logger.Error(ex);
+            }
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using ProgrammeFrameCLI.Common;
+using ProgrammeFrameCLI.Entity;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ProgrammeFrameCLI
@@ -28,16 +30,43 @@ namespace ProgrammeFrameCLI
         }
 
         /// <summary>
-        /// 项目存放路径选择
+        /// 项目存放路径/资源文件路径选择
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Lbl_ProgrammeDirSelected_Click(object sender, EventArgs e)
         {
+            commonOpenFileDialog.IsFolderPicker = true;
+            if ((sender as Label).Name.Contains("ProgrammeDirSelected")) commonOpenFileDialog.Title = "请选择项目保存位置";
+            else
+            {
+                commonOpenFileDialog.InitialDirectory = Path.GetDirectoryName(txt_UIInitialCodeLocate.Text);
+                commonOpenFileDialog.Title = "请选择资源文件所在位置";
+            }
             if (commonOpenFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                txt_ProgrammeDir.Text = commonOpenFileDialog.FileName;
+                ((sender as Label).Tag as TextBox).Text = commonOpenFileDialog.FileName;
             }
+        }
+
+        /// <summary>
+        /// 界面代码模板选择
+        /// </summary>
+        private void Lbl_UIInitialCodeSelected_Click(object sender, EventArgs e)
+        {
+            commonOpenFileDialog.IsFolderPicker = false;
+            commonOpenFileDialog.Title = "请选择界面代码模板";
+            if(commonOpenFileDialog.Filters.Count == 0) commonOpenFileDialog.Filters.Add(new CommonFileDialogFilter("界面模板", "*.Designer.cs"));
+            if (commonOpenFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                txt_UIInitialCodeLocate.Text = commonOpenFileDialog.FileName;
+            }
+        }
+
+        private void Cb_InitialUI_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((sender as CheckBox).Checked) pnl_InitialUI.Visible = true;
+            else pnl_InitialUI.Visible = false;
         }
 
         /// <summary>
@@ -73,32 +102,55 @@ namespace ProgrammeFrameCLI
         {
             try
             {
-                //针对基础信息页点了下一步又返回来修改基础信息后在点下一步的情况，删除上次创建的目录
-                if (!string.IsNullOrEmpty(projectDir) && !projectDir.Equals((txt_ProgrammeDir.Text + "\\" + txt_ProgrammeName.Text).Replace("\\\\", "\\"))) Directory.Delete(projectDir, true);
+                projectName = txt_ProgrammeName.Text.Trim();
 
-                if (txt_ProgrammeDir.Text.EndsWith("\\")) projectDir = txt_ProgrammeDir.Text + txt_ProgrammeName.Text;
-                else projectDir = txt_ProgrammeDir.Text + "\\" + txt_ProgrammeName.Text;
+                //针对基础信息页点了下一步又返回来修改基础信息后在点下一步的情况，删除上次创建的目录
+                if (!string.IsNullOrEmpty(projectDir) && !projectDir.Equals((txt_ProgrammeDir.Text + "\\" + projectName).Replace("\\\\", "\\"))) Directory.Delete(projectDir, true);
+
+                if (txt_ProgrammeDir.Text.EndsWith("\\")) projectDir = txt_ProgrammeDir.Text + projectName;
+                else projectDir = txt_ProgrammeDir.Text + "\\" + projectName;
 
                 Directory.CreateDirectory(projectDir);
                 GlobalData.logger.Info("创建项目路径：" + projectDir);
 
-                Utils.Utils.DirectoryCopy(Properties.Settings.Default.ProgrammeFrameLocate, projectDir, new string[] { ".git", ".vs", "Debug", "Release", "obj" }, new string[] { "LICENSE", "ProgrammeFrame.csproj.user", "README.md" });
-
-                ChangeProjectName(projectDir, txt_ProgrammeName.Text);
-
-                ChangeFileContext(projectDir, txt_ProgrammeName.Text);
-
                 if (cb_GitSelect.Checked)
+                {
                     Utils.Utils.CMDExecute("start \"\" /MIN \"" + Properties.Settings.Default.GitInstallDir + "\\bin\\sh.exe\" -c \"cd " + projectDir.Replace('\\', '/') + "; git init\"");
+                    GlobalData.logger.Info("初始化git");
+                }
 
+                Task.Factory.StartNew(() =>
+                {
+                    Utils.Utils.DirectoryCopy(Properties.Settings.Default.ProgrammeFrameLocate, projectDir, new string[] { ".git", ".vs", "Debug", "Release", "obj", "Utils" }, new string[] { "LICENSE", "ProgrammeFrame.csproj.user", "README.md", ".gitignore" });
+
+                    ChangeProjectName(projectDir, projectName);
+
+                    ChangeFileContext(projectDir, projectName);
+                }).ContinueWith(t =>
+                {
+                    if (t.Status == TaskStatus.RanToCompletion)
+                    {
+                        if (cb_InitialUI.Checked)
+                        {
+                            GlobalData.logger.Info("初始化界面，模板路径：" + txt_UIInitialCodeLocate.Text);
+                            GenerateUIFromExistUI(txt_UIInitialCodeLocate.Text.Trim(), projectDir + "\\MainForm.Designer.cs", txt_NameSpaceName.Text.Trim(), projectName, txt_ClassName.Text.Trim());
+                            CopyResourcesFile(txt_ResourcesDir.Text.Trim(), projectDir);
+                        }
+                    }
+                    else if(t.Exception != null)
+                    {
+                        GlobalData.logger.Error(t.Exception);
+                    }
+                });
+                
                 PanelVisibleControl(false, true, false);
 
                 flp_AvailableUtils.Controls.Clear();
-                DisplayAvailableUtils(projectDir + @"\Utils");
+                DisplayAvailableUtils(Properties.Settings.Default.ProgrammeFrameLocate + @"\Utils");
             }
             catch (Exception ex)
             {
-                GlobalData.logger.Error("Btn_OK_Click", ex);
+                GlobalData.logger.Error(ex);
             }
         }
         #endregion
@@ -121,33 +173,29 @@ namespace ProgrammeFrameCLI
         /// <param name="e"></param>
         private void Btn_OK_Click(object sender, EventArgs e)
         {
-            //如果没有全选的话就删掉没选中的类文件，不使用cb_UtilsAll是因为还有个TODO逻辑待处理
-            if(listSelectedUtils.Count != utilsCount)
+            try
             {
-                foreach(string file in Directory.GetFiles(projectDir + "\\Utils"))
-                {
-                    if(!listSelectedUtils.Select(util => util.ClassFullPath).Contains(file) && !file.Contains("Utils.cs"))
-                    {
-                        File.Delete(file);
-                    }
-                }
-
                 StreamReader sr = new StreamReader(projectDir + "\\" + Utils.Utils.FindFileNameInPath(projectDir) + ".csproj");
                 StringBuilder sb = new StringBuilder();
-                while(!sr.EndOfStream)
+
+                if (!Directory.Exists(projectDir + "\\Utils")) Directory.CreateDirectory(projectDir + "\\Utils");
+
+                //拷贝工具类到新项目
+                foreach (EntityAvailableUtil util in listSelectedUtils)
+                {
+                    File.Copy(util.ClassFullPath, projectDir + "\\Utils\\" + Path.GetFileName(util.ClassFullPath), true);
+                }
+
+                ChangeFileContext(projectDir + "\\Utils\\", projectName);
+
+                //删除新项目csproj文件中没有的工具类
+                while (!sr.EndOfStream)
                 {
                     string content = sr.ReadLine();
-                    if (content.Contains("Utils") && !content.Contains("Utils.cs"))
+                    if (content.Contains("Utils"))
                     {
-                        foreach(string name in listSelectedUtils.Select(util => util.Name))
-                        {
-                            //通过这种方式删掉文件里没被选中的类
-                            if (content.Contains(name))
-                            {
-                                sb.AppendLine(content);
-                                break;
-                            }
-                        }
+                        if (listSelectedUtils.Where(util => content.Contains(util.Name + ".cs")).Count() > 0)
+                            sb.AppendLine(content);
                     }
                     else
                         sb.AppendLine(content);
@@ -156,11 +204,16 @@ namespace ProgrammeFrameCLI
                 StreamWriter sw = new StreamWriter(projectDir + "\\" + Utils.Utils.FindFileNameInPath(projectDir) + ".csproj");
                 sw.WriteLine(sb);
                 sw.Close();
+
+                System.Diagnostics.Process.Start(Properties.Settings.Default.VSInstallDir + @"\Common7\IDE\devenv.exe", projectDir + "\\" + txt_ProgrammeName.Text + ".csproj");
+
+                Application.Exit();
             }
-
-            System.Diagnostics.Process.Start(Properties.Settings.Default.VSInstallDir + @"\Common7\IDE\devenv.exe", projectDir + "\\" + txt_ProgrammeName.Text + ".csproj");
-
-            Application.Exit();
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                GlobalData.logger.Error(ex);
+            }
         }
 
         /// <summary>
@@ -170,7 +223,18 @@ namespace ProgrammeFrameCLI
         /// <param name="e"></param>
         private void Cb_UtilsAll_CheckedChanged(object sender, EventArgs e)
         {
-            foreach (CheckBox checkBox in flp_AvailableUtils.Controls) checkBox.Checked = (sender as CheckBox).Checked;
+            if ((sender as CheckBox).Checked)
+            {
+                foreach (CheckBox checkBox in flp_AvailableUtils.Controls) if (checkBox.Enabled) checkBox.Checked = true;
+            }
+            else
+            {
+                int checkedCount = 0;
+                foreach (CheckBox checkBox in flp_AvailableUtils.Controls) if (checkBox.Checked) checkedCount++;
+                if(checkedCount == flp_AvailableUtils.Controls.Count)
+                    foreach (CheckBox checkBox in flp_AvailableUtils.Controls) 
+                        if (checkBox.Enabled) checkBox.Checked = false;
+            }
         }
         #endregion
 

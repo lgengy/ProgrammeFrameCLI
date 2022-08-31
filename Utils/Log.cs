@@ -45,7 +45,7 @@ namespace ProgrammeFrameCLI.Utils
 
         private List<RollingFileAppender> CreateRollingFileAppender(string logName, string logNameError, string logPath, string maxFileSize, int maxLogCount, bool enableErrorLog)
         {
-            var patternLayout = new PatternLayout("%date [%2thread] %-5level %logger - %message%newline");
+            var patternLayout = new PatternLayout("%date [%2thread] %-5level %method - %message%newline");
             patternLayout.ActivateOptions();
 
             List<RollingFileAppender> rollingFileAppender = new List<RollingFileAppender>(2);

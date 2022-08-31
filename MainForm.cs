@@ -13,7 +13,6 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ProgrammeFrameCLI.Common;
 using System;
-using System.Configuration;
 using System.Windows.Forms;
 
 namespace ProgrammeFrameCLI
@@ -21,11 +20,15 @@ namespace ProgrammeFrameCLI
     public partial class MainForm : Form
     {
         string projectDir;
+        string projectName;
         CommonOpenFileDialog commonOpenFileDialog = new CommonOpenFileDialog();
 
         public MainForm()
         {
             InitializeComponent();
+
+            lbl_ProgrammeDirSelected.Tag = txt_ProgrammeDir;
+            lbl_ResourcesDirSelected.Tag = txt_ResourcesDir;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -34,8 +37,6 @@ namespace ProgrammeFrameCLI
             GlobalData.logger.Info("==========================版本号：1.0.0.1===========================");
             GlobalData.logger.Info("====================================================================");
 
-            commonOpenFileDialog.IsFolderPicker = true;
-            commonOpenFileDialog.Title = "请选择项目位置";
             commonOpenFileDialog.InitialDirectory = Properties.Settings.Default.ProjectLocate;
 
             //程序首次启动时进入设置界面进行配置

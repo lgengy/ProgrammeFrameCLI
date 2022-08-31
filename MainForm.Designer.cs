@@ -37,6 +37,22 @@ namespace ProgrammeFrameCLI
             this.txt_ProgrammeDir = new System.Windows.Forms.TextBox();
             this.lbl_ProgrammeDirSelected = new System.Windows.Forms.Label();
             this.pnl_Config_BaseInfo = new System.Windows.Forms.Panel();
+            this.pnl_InitialUI = new System.Windows.Forms.Panel();
+            this.lbl_Tip_NameSpaceName = new System.Windows.Forms.Label();
+            this.lbl_Tip_ClassName = new System.Windows.Forms.Label();
+            this.txt_ClassName = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txt_NameSpaceName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.lbl_Tip_ResourcesDir = new System.Windows.Forms.Label();
+            this.lbl_Tip_UIInitialCode = new System.Windows.Forms.Label();
+            this.lbl_ResourcesDirSelected = new System.Windows.Forms.Label();
+            this.txt_ResourcesDir = new System.Windows.Forms.TextBox();
+            this.lbl_ResourcesDir = new System.Windows.Forms.Label();
+            this.lbl_UIInitialCodeSelected = new System.Windows.Forms.Label();
+            this.txt_UIInitialCodeLocate = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cb_InitialUI = new System.Windows.Forms.CheckBox();
             this.btn_Setting = new System.Windows.Forms.Button();
             this.cb_GitSelect = new System.Windows.Forms.CheckBox();
             this.btn_Cancel = new System.Windows.Forms.Button();
@@ -65,6 +81,7 @@ namespace ProgrammeFrameCLI
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pnl_Config_BaseInfo.SuspendLayout();
+            this.pnl_InitialUI.SuspendLayout();
             this.pnl_Config_AvailableUtils.SuspendLayout();
             this.flp_AvailableUtils.SuspendLayout();
             this.pnl_Setting.SuspendLayout();
@@ -118,6 +135,8 @@ namespace ProgrammeFrameCLI
             // 
             // pnl_Config_BaseInfo
             // 
+            this.pnl_Config_BaseInfo.Controls.Add(this.pnl_InitialUI);
+            this.pnl_Config_BaseInfo.Controls.Add(this.cb_InitialUI);
             this.pnl_Config_BaseInfo.Controls.Add(this.btn_Setting);
             this.pnl_Config_BaseInfo.Controls.Add(this.cb_GitSelect);
             this.pnl_Config_BaseInfo.Controls.Add(this.btn_Cancel);
@@ -132,6 +151,173 @@ namespace ProgrammeFrameCLI
             this.pnl_Config_BaseInfo.Name = "pnl_Config_BaseInfo";
             this.pnl_Config_BaseInfo.Size = new System.Drawing.Size(800, 450);
             this.pnl_Config_BaseInfo.TabIndex = 4;
+            // 
+            // pnl_InitialUI
+            // 
+            this.pnl_InitialUI.Controls.Add(this.lbl_Tip_NameSpaceName);
+            this.pnl_InitialUI.Controls.Add(this.lbl_Tip_ClassName);
+            this.pnl_InitialUI.Controls.Add(this.txt_ClassName);
+            this.pnl_InitialUI.Controls.Add(this.label8);
+            this.pnl_InitialUI.Controls.Add(this.txt_NameSpaceName);
+            this.pnl_InitialUI.Controls.Add(this.label7);
+            this.pnl_InitialUI.Controls.Add(this.lbl_Tip_ResourcesDir);
+            this.pnl_InitialUI.Controls.Add(this.lbl_Tip_UIInitialCode);
+            this.pnl_InitialUI.Controls.Add(this.lbl_ResourcesDirSelected);
+            this.pnl_InitialUI.Controls.Add(this.txt_ResourcesDir);
+            this.pnl_InitialUI.Controls.Add(this.lbl_ResourcesDir);
+            this.pnl_InitialUI.Controls.Add(this.lbl_UIInitialCodeSelected);
+            this.pnl_InitialUI.Controls.Add(this.txt_UIInitialCodeLocate);
+            this.pnl_InitialUI.Controls.Add(this.label6);
+            this.pnl_InitialUI.Location = new System.Drawing.Point(12, 201);
+            this.pnl_InitialUI.Name = "pnl_InitialUI";
+            this.pnl_InitialUI.Size = new System.Drawing.Size(776, 103);
+            this.pnl_InitialUI.TabIndex = 9;
+            this.pnl_InitialUI.Visible = false;
+            // 
+            // lbl_Tip_NameSpaceName
+            // 
+            this.lbl_Tip_NameSpaceName.AutoSize = true;
+            this.lbl_Tip_NameSpaceName.ForeColor = System.Drawing.Color.Red;
+            this.lbl_Tip_NameSpaceName.Location = new System.Drawing.Point(72, 33);
+            this.lbl_Tip_NameSpaceName.Name = "lbl_Tip_NameSpaceName";
+            this.lbl_Tip_NameSpaceName.Size = new System.Drawing.Size(137, 12);
+            this.lbl_Tip_NameSpaceName.TabIndex = 15;
+            this.lbl_Tip_NameSpaceName.Text = "请输入所用界面代码包名";
+            this.lbl_Tip_NameSpaceName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_Tip_ClassName
+            // 
+            this.lbl_Tip_ClassName.AutoSize = true;
+            this.lbl_Tip_ClassName.ForeColor = System.Drawing.Color.Red;
+            this.lbl_Tip_ClassName.Location = new System.Drawing.Point(72, 81);
+            this.lbl_Tip_ClassName.Name = "lbl_Tip_ClassName";
+            this.lbl_Tip_ClassName.Size = new System.Drawing.Size(137, 12);
+            this.lbl_Tip_ClassName.TabIndex = 14;
+            this.lbl_Tip_ClassName.Text = "请输入所用界面代码类名";
+            this.lbl_Tip_ClassName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txt_ClassName
+            // 
+            this.txt_ClassName.Location = new System.Drawing.Point(72, 58);
+            this.txt_ClassName.Name = "txt_ClassName";
+            this.txt_ClassName.Size = new System.Drawing.Size(137, 21);
+            this.txt_ClassName.TabIndex = 13;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(11, 61);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 12);
+            this.label8.TabIndex = 12;
+            this.label8.Text = "类    名：";
+            // 
+            // txt_NameSpaceName
+            // 
+            this.txt_NameSpaceName.Location = new System.Drawing.Point(72, 9);
+            this.txt_NameSpaceName.Name = "txt_NameSpaceName";
+            this.txt_NameSpaceName.Size = new System.Drawing.Size(137, 21);
+            this.txt_NameSpaceName.TabIndex = 11;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(11, 12);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 12);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "包    名：";
+            // 
+            // lbl_Tip_ResourcesDir
+            // 
+            this.lbl_Tip_ResourcesDir.AutoSize = true;
+            this.lbl_Tip_ResourcesDir.ForeColor = System.Drawing.Color.Red;
+            this.lbl_Tip_ResourcesDir.Location = new System.Drawing.Point(290, 80);
+            this.lbl_Tip_ResourcesDir.Name = "lbl_Tip_ResourcesDir";
+            this.lbl_Tip_ResourcesDir.Size = new System.Drawing.Size(137, 12);
+            this.lbl_Tip_ResourcesDir.TabIndex = 9;
+            this.lbl_Tip_ResourcesDir.Text = "请选择资源文件所在目录";
+            this.lbl_Tip_ResourcesDir.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_Tip_UIInitialCode
+            // 
+            this.lbl_Tip_UIInitialCode.AutoSize = true;
+            this.lbl_Tip_UIInitialCode.ForeColor = System.Drawing.Color.Red;
+            this.lbl_Tip_UIInitialCode.Location = new System.Drawing.Point(290, 32);
+            this.lbl_Tip_UIInitialCode.Name = "lbl_Tip_UIInitialCode";
+            this.lbl_Tip_UIInitialCode.Size = new System.Drawing.Size(173, 12);
+            this.lbl_Tip_UIInitialCode.TabIndex = 8;
+            this.lbl_Tip_UIInitialCode.Text = "请选择初始化所使用的界面代码";
+            this.lbl_Tip_UIInitialCode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_ResourcesDirSelected
+            // 
+            this.lbl_ResourcesDirSelected.BackColor = System.Drawing.Color.LightGray;
+            this.lbl_ResourcesDirSelected.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lbl_ResourcesDirSelected.Location = new System.Drawing.Point(658, 52);
+            this.lbl_ResourcesDirSelected.Name = "lbl_ResourcesDirSelected";
+            this.lbl_ResourcesDirSelected.Size = new System.Drawing.Size(25, 21);
+            this.lbl_ResourcesDirSelected.TabIndex = 7;
+            this.lbl_ResourcesDirSelected.Text = "...";
+            this.lbl_ResourcesDirSelected.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lbl_ResourcesDirSelected.Click += new System.EventHandler(this.Lbl_ProgrammeDirSelected_Click);
+            // 
+            // txt_ResourcesDir
+            // 
+            this.txt_ResourcesDir.Enabled = false;
+            this.txt_ResourcesDir.Location = new System.Drawing.Point(290, 56);
+            this.txt_ResourcesDir.Name = "txt_ResourcesDir";
+            this.txt_ResourcesDir.Size = new System.Drawing.Size(362, 21);
+            this.txt_ResourcesDir.TabIndex = 6;
+            // 
+            // lbl_ResourcesDir
+            // 
+            this.lbl_ResourcesDir.AutoSize = true;
+            this.lbl_ResourcesDir.Location = new System.Drawing.Point(228, 61);
+            this.lbl_ResourcesDir.Name = "lbl_ResourcesDir";
+            this.lbl_ResourcesDir.Size = new System.Drawing.Size(65, 12);
+            this.lbl_ResourcesDir.TabIndex = 5;
+            this.lbl_ResourcesDir.Text = "资源目录：";
+            // 
+            // lbl_UIInitialCodeSelected
+            // 
+            this.lbl_UIInitialCodeSelected.BackColor = System.Drawing.Color.LightGray;
+            this.lbl_UIInitialCodeSelected.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lbl_UIInitialCodeSelected.Location = new System.Drawing.Point(658, 9);
+            this.lbl_UIInitialCodeSelected.Name = "lbl_UIInitialCodeSelected";
+            this.lbl_UIInitialCodeSelected.Size = new System.Drawing.Size(25, 21);
+            this.lbl_UIInitialCodeSelected.TabIndex = 4;
+            this.lbl_UIInitialCodeSelected.Text = "...";
+            this.lbl_UIInitialCodeSelected.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lbl_UIInitialCodeSelected.Click += new System.EventHandler(this.Lbl_UIInitialCodeSelected_Click);
+            // 
+            // txt_UIInitialCodeLocate
+            // 
+            this.txt_UIInitialCodeLocate.Enabled = false;
+            this.txt_UIInitialCodeLocate.Location = new System.Drawing.Point(290, 9);
+            this.txt_UIInitialCodeLocate.Name = "txt_UIInitialCodeLocate";
+            this.txt_UIInitialCodeLocate.Size = new System.Drawing.Size(362, 21);
+            this.txt_UIInitialCodeLocate.TabIndex = 1;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(228, 12);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(65, 12);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "界面代码：";
+            // 
+            // cb_InitialUI
+            // 
+            this.cb_InitialUI.AutoSize = true;
+            this.cb_InitialUI.Location = new System.Drawing.Point(131, 172);
+            this.cb_InitialUI.Name = "cb_InitialUI";
+            this.cb_InitialUI.Size = new System.Drawing.Size(84, 16);
+            this.cb_InitialUI.TabIndex = 8;
+            this.cb_InitialUI.Text = "初始化界面";
+            this.cb_InitialUI.UseVisualStyleBackColor = true;
+            this.cb_InitialUI.CheckedChanged += new System.EventHandler(this.Cb_InitialUI_CheckedChanged);
             // 
             // btn_Setting
             // 
@@ -452,6 +638,8 @@ namespace ProgrammeFrameCLI
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.pnl_Config_BaseInfo.ResumeLayout(false);
             this.pnl_Config_BaseInfo.PerformLayout();
+            this.pnl_InitialUI.ResumeLayout(false);
+            this.pnl_InitialUI.PerformLayout();
             this.pnl_Config_AvailableUtils.ResumeLayout(false);
             this.pnl_Config_AvailableUtils.PerformLayout();
             this.flp_AvailableUtils.ResumeLayout(false);
@@ -497,6 +685,22 @@ namespace ProgrammeFrameCLI
         private System.Windows.Forms.Label lbl_Select_GitInstallDir;
         private System.Windows.Forms.Label lbl_Select_VSInstallDir;
         private System.Windows.Forms.Button btn_Setting;
+        private System.Windows.Forms.Panel pnl_InitialUI;
+        private System.Windows.Forms.Label lbl_Tip_ResourcesDir;
+        private System.Windows.Forms.Label lbl_Tip_UIInitialCode;
+        private System.Windows.Forms.Label lbl_ResourcesDirSelected;
+        private System.Windows.Forms.TextBox txt_ResourcesDir;
+        private System.Windows.Forms.Label lbl_ResourcesDir;
+        private System.Windows.Forms.Label lbl_UIInitialCodeSelected;
+        private System.Windows.Forms.TextBox txt_UIInitialCodeLocate;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox cb_InitialUI;
+        private System.Windows.Forms.Label lbl_Tip_NameSpaceName;
+        private System.Windows.Forms.Label lbl_Tip_ClassName;
+        private System.Windows.Forms.TextBox txt_ClassName;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox txt_NameSpaceName;
+        private System.Windows.Forms.Label label7;
     }
 }
 

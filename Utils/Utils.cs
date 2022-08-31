@@ -635,7 +635,6 @@ namespace ProgrammeFrameCLI.Utils
 
         private void EmptyFunftion()
         {
-            GlobalData.logger.Info(">" + MethodBase.GetCurrentMethod().Name);
             try
             {
 
@@ -643,9 +642,8 @@ namespace ProgrammeFrameCLI.Utils
             catch (Exception ex)
             {
                 GlobalData.logger.Warn(ex.Message);
-                GlobalData.logger.Error(MethodBase.GetCurrentMethod().Name, ex);
+                GlobalData.logger.Error(ex);
             }
-            GlobalData.logger.Info("<" + MethodBase.GetCurrentMethod().Name);
         }
         #endregion
 
@@ -666,6 +664,9 @@ namespace ProgrammeFrameCLI.Utils
                 DirectoryInfo dir = new DirectoryInfo(sourceDirectory);
                 //获取目录下（不包含子目录）的文件和子目录
                 FileSystemInfo[] fileinfo = dir.GetFileSystemInfos();
+
+                if (!Directory.Exists(targetDirectory)) Directory.CreateDirectory(targetDirectory);
+
                 foreach (FileSystemInfo i in fileinfo)
                 {
                     if (i is DirectoryInfo)     //判断是否文件夹
@@ -691,7 +692,7 @@ namespace ProgrammeFrameCLI.Utils
             }
             catch (Exception ex)
             {
-                GlobalData.logger.Error("复制文件出现异常" + ex.Message);
+                GlobalData.logger.Error(ex);
             }
         }
 
